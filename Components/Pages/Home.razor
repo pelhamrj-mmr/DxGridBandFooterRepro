@@ -1,0 +1,72 @@
+@page "/"
+
+<PageTitle>DxGrid band footer repro</PageTitle>
+
+<main class="repro">
+    <h1>DxGrid: footer leaves the bottom edge when a header outgrows the band rows</h1>
+    <p>
+        A default <code>DxGrid</code>: one band column, one total summary, a CSS height, three rows. No templates,
+        no <code>CustomizeElement</code>, no custom CSS on the grid apart from its height. With a short <b>Hours</b>
+        caption the footer sits on the grid's bottom edge. Once that caption wraps taller than the band's two header
+        rows, it no longer does. See <code>README.md</code> for steps and analysis.
+    </p>
+
+    <div class="repro__controls">
+        <label><input id="long-caption" type="checkbox" @bind="_longCaption" /> Long <b>Hours</b> caption</label>
+        <button id="recreate" type="button" @onclick="Recreate">Recreate grid (<code>@@key</code>)</button>
+        <label><input id="virtual-scrolling" type="checkbox" @bind="_virtualScrolling" /> <code>VirtualScrollingEnabled</code></label>
+        <label><input id="workaround" type="checkbox" @bind="_workaround" /> Apply CSS workaround</label>
+    </div>
+
+    <div id="footer-diagnostics" class="repro__diagnostics">Measuring…</div>
+
+    <div class="@(_workaround ? "workaround" : null)">
+        <DxGrid @key="_gridKey" Data="_rows" CssClass="repro-grid" VirtualScrollingEnabled="_virtualScrolling">
+            <Columns>
+                <DxGridDataColumn FieldName="Name" />
+                <DxGridDataColumn FieldName="Hours" Caption="@HoursCaption" Width="160px" />
+                <DxGridBandColumn Caption="Totals">
+                    <Columns>
+                        <DxGridDataColumn FieldName="Working" Width="110px" />
+                        <DxGridDataColumn FieldName="Other" Width="110px" />
+                    </Columns>
+                </DxGridBandColumn>
+            </Columns>
+            <TotalSummary>
+                <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="Hours" />
+                <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="Working" />
+                <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="Other" />
+            </TotalSummary>
+        </DxGrid>
+    </div>
+</main>
+
+@code {
+    private const string ShortCaption = "Hours";
+    private const string LongCaption = "Job 26-1234 / JA Code 12-345 / WO WO-2026-000123-ELECTRICAL-SUBSTATION-PHASE-2";
+
+    // ?long=true renders the long caption on the very first render, without any interaction or @key change.
+    [SupplyParameterFromQuery(Name = "long")]
+    public bool LongOnLoad { get; set; }
+
+    private int _gridKey;
+    private bool _longCaption;
+    private bool _virtualScrolling;
+    private bool _workaround;
+
+    private readonly List<Row> _rows =
+    [
+        new("Employee 1", 8m, 8m, 0m),
+        new("Employee 2", 6m, 6m, 2m),
+        new("Employee 3", 10m, 8m, 0m)
+    ];
+
+    private string HoursCaption => _longCaption ? LongCaption : ShortCaption;
+
+    protected override void OnInitialized() => _longCaption = LongOnLoad;
+
+    // A new @key makes Blazor dispose the grid and create a fresh instance, as a page navigation would.
+    private void Recreate() => _gridKey++;
+
+    public sealed record Row(string Name, decimal Hours, decimal Working, decimal Other);
+}

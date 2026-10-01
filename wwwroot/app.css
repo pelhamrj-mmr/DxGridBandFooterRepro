@@ -1,0 +1,81 @@
+html, body {
+    margin: 0;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    color: #242424;
+}
+
+.repro {
+    max-width: 980px;
+    margin: 24px auto;
+    padding: 0 16px;
+}
+
+.repro h1 {
+    font-size: 20px;
+    margin: 0 0 8px;
+}
+
+h1:focus {
+    outline: none;
+}
+
+.repro__controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    margin: 16px 0 8px;
+}
+
+.repro__diagnostics {
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-family: Consolas, monospace;
+    font-size: 12.5px;
+    background: #f3f3f3;
+}
+
+.repro__diagnostics[data-state="ok"] {
+    background: #e7f6ec;
+    color: #0e5c2b;
+}
+
+.repro__diagnostics[data-state="bad"] {
+    background: #fde7e9;
+    color: #8a1c24;
+}
+
+/* The only styling on the grid: the documented way to give a DxGrid a fixed height. */
+.repro-grid {
+    height: 420px;
+}
+
+/* Workaround (the "Apply CSS workaround" checkbox): apply DevExpress's no-scroll layout unconditionally instead of
+   relying on the JS that toggles .dxbl-grid-table-no-scroll. A table's height is only a minimum, so a short grid
+   stretches to the viewport (the filler row takes the slack) and a long grid still grows and scrolls under the
+   sticky footer. The filler cell's top border becomes a 1px background so a 0px filler does not double the
+   footer's top line. Firefox is excluded because DevExpress uses different filler rules there. */
+.workaround .repro-grid:not(.dxFirefox *) .dxbl-grid-table {
+    height: 100%;
+}
+
+.workaround .repro-grid:not(.dxFirefox *) .dxbl-grid-table > tbody > tr.dxbl-grid-empty-row {
+    display: table-row;
+}
+
+.workaround .repro-grid:not(.dxFirefox *) .dxbl-grid-table > tbody > tr.dxbl-grid-empty-row > td:not(.dxbl-grid-empty-cell) {
+    border-top-width: 0;
+    background-image: linear-gradient(var(--dxbl-grid-h-line-color) var(--dxbl-grid-border-width), transparent 0);
+}
+
+.blazor-error-boundary {
+    background: #b32121;
+    padding: 1rem;
+    color: white;
+}
+
+.blazor-error-boundary::after {
+    content: "An error has occurred.";
+}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <ResourcePreloader />
+    @DxResourceManager.RegisterScripts()
+    @DxResourceManager.RegisterTheme(DevExpress.Blazor.Themes.Fluent)
+    <link rel="stylesheet" href="@Assets["app.css"]" />
+    <link rel="stylesheet" href="@Assets["DxGridBandFooterRepro.styles.css"]" />
+    <ImportMap />
+    <HeadOutlet @rendermode="InteractiveServer" />
+</head>
+
+<body>
+    <Routes @rendermode="InteractiveServer" />
+    <ReconnectModal />
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+    @* Diagnostics only: reports where the footer sits and whether DevExpress has the no-scroll class applied. It does
+       not touch the grid, so the bug reproduces identically without it. *@
+    <script src="@Assets["footer-diagnostics.js"]"></script>
+</body>
+
+</html>
