@@ -66,7 +66,7 @@ The diagnostics line above the grid is read-only (`wwwroot/footer-diagnostics.js
   short and the class is added back. The outcome depends on timing:
   - it settles **off**, and the footer floats (step 2);
   - it stays **on**, with a stray scroll range (step 3);
-  - or it flips continuously. This repro measured up to about 145 flips per second on first load with virtual
+  - or it flips continuously. This repro measured up to about 145 flips per second (corresponding to my monitor's refresh rate of 144hz) on first load with virtual
     scrolling, and the flipping is continuous in our production grid.
 
 ## Workaround
